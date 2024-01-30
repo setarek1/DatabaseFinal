@@ -113,13 +113,32 @@ BEFORE INSERT ON `transaction`
 FOR EACH ROW 
 BEGIN 
 	DECLARE rate1, rate2 INT;
+    DECLARE currency1, currency2 VARCHAR(10);
     SELECT buyRate INTO rate1 FROM currencyMarket WHERE currencyID = NEW.currency_fromID;
 	SELECT buyRate INTO rate2 FROM currencyMarket WHERE currencyID = NEW.currency_toID;
 
 	SET NEW.amount2 = NEW.amount * (rate2/rate1);
+    
+    SELECT name INTO currency1 FROM currencymarket WHERE currencyID = NEW.currency_fromID;
+    SELECT name INTO currency2 FROM currencymarket WHERE currencyID = NEW.currency_toID;
     UPDATE wallet
     SET
-		dollarBalance;
+		dollarBalance = dollarBalance + IF(currency2 = 'dollar',NEW.amount2, 0) + IF(currency1 = 'dollar', -NEW.amount, 0),
+        tomanBalance = tomanBalance + IF(currency2 = 'toman', NEW.amount2, 0) + IF(currency1 = 'toman', -NEW.amount, 0),
+        lireBalance = lireBalance + IF(currency2 = 'lire', NEW.amount2, 0) + IF(currency1 = 'lire', -NEW.amount, 0),
+        poundBalance = poundBalance + IF(currency2 = 'pound', NEW.amount2, 0)+ IF(currency1 = 'pound', -NEW.amount, 0),
+        euroBalance = euroBalance + IF(currency2 = 'euro', NEW.amount2, 0) + IF(currency2 = 'euro', -NEW.amount, 0)
+	WHERE user_userID = NEW.user_buyerID1;
+    
+    UPDATE wallet
+	SET
+		dollarBalance = dollarBalance + IF(currency2 = 'dollar', -NEW.amount2, 0) + IF(currency1 = 'dollar',  NEW.amount, 0),
+        tomanBalance = tomanBalance + IF(currency2 = 'toman', -NEW.amount2, 0) + IF(currency1 = 'toman', NEW.amount, 0),
+        lireBalance = lireBalance + IF(currency2 = 'lire', -NEW.amount2, 0) + IF(currency1 = 'lire', NEW.amount, 0),
+        poundBalance = poundBalance + IF(currency2 = 'pound', -NEW.amount2, 0)+ IF(currency1 = 'pound', NEW.amount, 0),
+        euroBalance = euroBalance + IF(currency2 = 'euro', -NEW.amount2, 0) + IF(currency2 = 'euro', NEW.amount, 0)
+	WHERE user_userID = NEW.user_sellerID;
+    
     
 END;
 //
@@ -129,8 +148,18 @@ DELIMITER ;
 -- DROP TABLE transaction, wallet, currencyMarket, user;
  -- INSERT INTO transaction(transactionID, date, amount, user_sellerID, user_buyerID1, currency_fromID, currency_toID) VALUES (0, '2001-01-01', 10.02, 0, 0, 1, 0);
  -- DELETE FROM transaction;
-SELECT * FROM transaction;
-SELECT * FROM wallet;
 
  -- INSERT INTO transaction(transactionID, amount) VALUES (0,1);
+-- INSERT INTO user (userID, userName, userPassword, userEmail) 
+-- VALUES
+-- (10000, 'testUser1', 'testUser1Pass','testUser1Email'),
+-- (10001, 'testUser2', 'testUser2Pass','testUser2Email');
 
+-- INSERT INTO wallet(walletId, dollarBalance, tomanBalance, lireBalance, poundBalance, euroBalance, user_userID)
+-- values
+-- (10000, 10, 0, 0, 0, 0, 10000),
+-- (10001, 0, 10, 0 ,0 ,0, 10001);
+INSERT INTO transaction(transactionID, date, amount, user_sellerID, user_buyerID1, currency_fromID, currency_toID) 
+VALUES(10000, '2024-01-01', 10,10000,10001,1,0);
+SELECT * FROM wallet WHERE walletID > 9999;
+-- SELECT * FROM user;
