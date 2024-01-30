@@ -144,6 +144,20 @@ END;
 //
 DELIMITER ;
 
+
+DROP TRIGGER IF EXISTS user_insert;
+DELIMITER //
+CREATE TRIGGER user_insert
+after INSERT ON `user`
+FOR EACH ROW 
+BEGIN 
+	INSERT INTO wallet(walletId, dollarBalance, tomanBalance, lireBalance, poundBalance, euroBalance, user_userID)
+    VALUES(NEW.userID, 0, 0, 0, 0, 0, NEW.userID);
+END;
+//
+DELIMITER ;
+
+
 -- DELETE FROM transaction;
 -- DROP TABLE transaction, wallet, currencyMarket, user;
  -- INSERT INTO transaction(transactionID, date, amount, user_sellerID, user_buyerID1, currency_fromID, currency_toID) VALUES (0, '2001-01-01', 10.02, 0, 0, 1, 0);
@@ -159,7 +173,10 @@ DELIMITER ;
 -- values
 -- (10000, 10, 0, 0, 0, 0, 10000),
 -- (10001, 0, 10, 0 ,0 ,0, 10001);
-INSERT INTO transaction(transactionID, date, amount, user_sellerID, user_buyerID1, currency_fromID, currency_toID) 
-VALUES(10000, '2024-01-01', 10,10000,10001,1,0);
-SELECT * FROM wallet WHERE walletID > 9999;
+-- INSERT INTO transaction(transactionID, date, amount, user_sellerID, user_buyerID1, currency_fromID, currency_toID) 
+-- VALUES(10000, '2024-01-01', 10,10000,10001,1,0);
+INSERT INTO user (userID, userName, userPassword, userEmail) 
+	VALUES
+	(10002, 'testUser3', 'testUser3Pass','testUser3Email');
+SELECT * FROM wallet WHERE walletID > 10000;
 -- SELECT * FROM user;
