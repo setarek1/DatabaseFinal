@@ -25,7 +25,7 @@ FROM
 JOIN 
     user u1 ON t.user_sellerID = u1.userID
 JOIN 
-	user u2 ON t.user_buyerID1 - u2.userID
+	user u2 ON t.user_buyerID1 = u2.userID
 JOIN 
 	currencyMarket c1 ON c1.currencyID = t.currency_fromID
 JOIN
@@ -87,7 +87,25 @@ FROM
         GROUP BY
             u.userID, u.userName
     ) AS returned
-ORDER BY
+ORDER BY 
     `total in dollars` DESC
 LIMIT 5;
 
+
+-- harder 3
+SELECT 
+	sq1.curr1 AS 'currency 1', 
+    sq1.curr2 AS 'currency 2', 
+    count(t1.transactionID) AS 'number of transactions',
+    SUM(amount) AS 'amount in dollors',
+    FLOOR(SUM(amount) / NULLIF(count(t1.transactionID),0)) AS average
+FROM ( SELECT transactionID, date, amount * cm1.buyRate / cm2.buyrate AS amount, currency_fromID, currency_toID 
+	FROM transaction
+    JOIN currencymarket cm1 ON currency_fromID = cm1.currencyID
+    JOIN currencymarket cm2 ON cm2.currencyID = 0
+		WHERE date>'2009-01-01' AND date<'2011-01-01' ) AS t1
+JOIN
+	(SELECT m1.currencyID AS currency1, m2.currencyID AS currency2, m1.name AS curr1, m2.name AS curr2
+	FROM currencymarket m1 INNER JOIN currencymarket m2 ON m1.currencyID < m2.currencyID) AS sq1
+ON ((sq1.currency1 = t1.currency_toID AND sq1.currency2 = t1.currency_fromID)OR (sq1.currency2 = t1.currency_toID AND sq1.currency1 = t1.currency_fromID)) 
+ GROUP BY sq1.currency1, sq1.currency2;
