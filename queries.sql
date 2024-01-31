@@ -35,17 +35,41 @@
 --     ((c1.name = 'toman' AND c2.name = 'dollar') OR (c1.name = 'dollar' AND c2.name = 'toman'));
 
 -- harder 1
-SELECT m.name AS currency, 
-	EXTRACT(MONTH FROM t.date) AS monthNumber, 
-    (SELECT SUM(amount) FROM (SELECT user_buyerID1, amount FROM transaction t2 WHERE t2.user_buyerID1=m.currencyID)) AS buy,  
-    (SELECT SUM(amount2)FROM (SELECT user_sellerID, amount2 FROM transaction t2 WHERE t2.user_sellerID=m.currencyID)) AS sell
-FROM transaction t, currencyMarket m
-WHERE EXTRACT(YEAR FROM t.date) = '2009'
--- total = SELECT IF(m.currencyID = t.currency_fromID, t.amount, amount2) FROM transaction
-GROUP BY currency, monthNumber
-ORDER by currency
-;
- 
+-- SELECT m.name AS currency, 
+-- 	EXTRACT(MONTH FROM t.date) AS monthNumber, 
+--     (SELECT SUM(amount) FROM (SELECT user_buyerID1, amount FROM transaction t2 WHERE t2.currency_fromID=m.currencyID)) AS buy,  
+--     (SELECT SUM(amount2)FROM (SELECT user_sellerID, amount2 FROM transaction t3 WHERE t3.currrency_toID=m.currencyID)) AS sell
+-- FROM transaction t, currencyMarket m
+-- WHERE EXTRACT(YEAR FROM t.date) = '2009'
+-- -- total = SELECT IF(m.currencyID = t.currency_fromID, t.amount, amount2) FROM transaction
+-- GROUP BY currency, monthNumber
+-- ORDER by currency
+-- ;
+
+SELECT currency, monthNumber, buy, sell, buy+sell AS total FROM
+(
+ SELECT
+    m.name AS currency,
+    EXTRACT(MONTH FROM t.date) AS monthNumber,
+    COALESCE(SUM(t2.amount), 0) AS buy,
+    COALESCE(SUM(t3.amount2), 0) AS sell
+FROM
+    currencyMarket m
+JOIN
+    transaction t ON m.currencyID = t.currency_fromID
+LEFT JOIN
+    (SELECT user_buyerID1, amount, currency_fromID FROM transaction WHERE EXTRACT(YEAR FROM date) = 2009) AS t2
+    ON m.currencyID = t2.currency_fromID
+LEFT JOIN
+    (SELECT user_sellerID, amount2, currency_toID FROM transaction WHERE EXTRACT(YEAR FROM date) = 2009) AS t3
+    ON m.currencyID = t3.currency_toID
+WHERE
+    EXTRACT(YEAR FROM t.date) = 2009
+GROUP BY
+    currency, monthNumber
+    ) AS returned 
+ORDER BY
+    currency, monthNumber;
 
 -- harder 2
 
