@@ -25,7 +25,7 @@ FROM
 JOIN 
     user u1 ON t.user_sellerID = u1.userID
 JOIN 
-	user u2 ON t.user_buyerID1 - u2.userID
+	user u2 ON t.user_buyerID1 = u2.userID
 JOIN 
 	currencyMarket c1 ON c1.currencyID = t.currency_fromID
 JOIN
