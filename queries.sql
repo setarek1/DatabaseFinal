@@ -168,3 +168,65 @@ ORDER BY
     transaction_count DESC
 LIMIT 10;
 --- SELECT * FROM transaction WHERE user_buyerID1=3696 OR user_sellerID=3696;
+--ours4:har arz chand bar moamele shode
+SELECT curr.name,  COUNT(curr.currencyID) AS traded
+FROM currencymarket curr
+JOIN transaction t ON (curr.currencyID = t.currency_fromID OR curr.currencyID = t.currency_toID)
+GROUP BY curr.currencyID;
+
+--ours5: useri ke az hame bishtar dollar forookhteh
+SELECT u.userID, SUM(t.amount) AS 'max selling dollar' 
+FROM user u
+JOIN transaction t on u.userID = t.user_sellerID
+WHERE t.currency_fromID = 1
+GROUP BY u.userID
+HAVING SUM(t.amount)> ALL(SELECT SUM(t2.amount)
+                      FROM user u2
+                      JOIN transaction t2 on u2.userID = t2.user_sellerID
+                      WHERE t2.currency_fromID = 1 AND u2.userID != u.userID
+                      GROUP BY u2.userID);
+
+--ours6: user hayi ke lire moamele nakardand
+SELECT u.userID AS ID, u.userName AS name
+FROM user u
+WHERE u.userID NOT IN(
+    SELECT u2.userID
+    FROM user u2
+    JOIN transaction t on (u2.userID = t.user_sellerID OR u2.userID = t.user_buyerID1)
+    WHERE t.currency_fromID = 3 OR t.currency_toID = 3);
+--ours7:user hayi ke faqat ba yek joft arz moamele anjam dadand
+SELECT temp.userID, temp.userName, temp.CID
+FROM
+((SELECT u.userID, u.userName, t.currency_fromID AS CID
+FROM user u
+JOIN transaction t ON (t.user_sellerID = u.userID)
+GROUP BY u.userID)
+UNION
+(SELECT u.userID, u.userName, t.currency_toID AS CID
+FROM user u
+JOIN transaction t ON (t.user_buyerID1 = u.userID)
+GROUP BY u.userID)) AS temp
+GROUP BY temp.userID
+HAVING COUNT(DISTINCT temp.CID) = 2;
+--ours8: tedad moamele beyn joft user hayi ke hadaqal yek moamele dashtand
+SELECT t.user_sellerID AS sellerID, t.user_buyerID1 AS buyerID
+, u1.userName AS sellerName, u2.userName AS buyerName, COUNT(t.transactionID) AS transactionCount 
+FROM transaction t 
+JOIN user u1 ON t.user_sellerID = u1.userID 
+JOIN user u2 ON t.user_buyerID1 = u2.userID 
+GROUP BY sellerID, buyerID;
+--ours9: user hayi ke hadaksar 2 moamele anjam dadand
+SELECT userID, username
+FROM user 
+WHERE userID NOT IN(
+SELECT userID
+FROM user
+JOIN transaction ON userID = user_sellerID OR userID = user_buyerID1
+GROUP BY userID
+HAVING COUNT(transactionID)>2);
+--ours10: user hayi ke ba hame joft arz haye momken moamele anjam dadand
+SELECT u.userID, u.userName
+FROM user u
+JOIN transaction t ON (u.userID = t.user_sellerID OR u.userID = t.user_buyerID1) 
+GROUP BY u.userID
+HAVING (COUNT(DISTINCT t.currency_fromID) = 5) AND (COUNT(DISTINCT t.currency_toID) = 5);
