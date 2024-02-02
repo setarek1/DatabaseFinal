@@ -109,3 +109,62 @@ JOIN
 	FROM currencymarket m1 INNER JOIN currencymarket m2 ON m1.currencyID < m2.currencyID) AS sq1
 ON ((sq1.currency1 = t1.currency_toID AND sq1.currency2 = t1.currency_fromID)OR (sq1.currency2 = t1.currency_toID AND sq1.currency1 = t1.currency_fromID)) 
  GROUP BY sq1.currency1, sq1.currency2;
+ 
+ 
+ 
+  -- ours1:user hayi ke dar hame currency ha transaction anjam dadan
+SELECT
+    u.userID,
+    u.username
+FROM
+    user u
+JOIN
+    transaction t ON u.userID = t.user_sellerID OR u.userID = t.user_buyerID1
+JOIN
+    currencymarket c ON c.currencyID = t.currency_fromID OR c.currencyID = t.currency_toID
+GROUP BY
+    u.userID, u.username
+HAVING
+    COUNT(DISTINCT c.currencyID) = (SELECT COUNT(*) FROM currencymarket);
+    
+
+
+-- ours2: TOP10 user hayi ke bishtar az 50 transaction ba total amount bishtar az 100000 dollar !!NOT CORRECT!!
+SELECT
+    u.userID,
+    u.username,
+    COUNT(*) AS transaction_count,
+    SUM(t.amount) AS total_transaction_volume
+FROM
+    user u
+JOIN
+    transaction t ON u.userID = t.user_sellerID OR u.userID = t.user_buyerID1
+GROUP BY
+    u.userID, u.username
+HAVING
+    transaction_count > 50 AND total_transaction_volume > 100000
+ORDER BY
+    total_transaction_volume DESC
+LIMIT 10;
+
+
+-- ours3: TOP10
+SELECT
+    u.userID,
+    u.username,
+    COUNT(*) AS transaction_count
+FROM
+    user u
+JOIN
+    transaction t1 ON u.userID = t1.user_buyerID1
+JOIN
+    transaction t2 ON u.userID = t2.user_sellerID
+WHERE
+    t1.currency_fromID = t2.currency_toID
+    AND t1.currency_toID = t2.currency_fromID
+GROUP BY
+    u.userID, u.username
+ORDER BY
+    transaction_count DESC
+LIMIT 10;
+--- SELECT * FROM transaction WHERE user_buyerID1=3696 OR user_sellerID=3696;
