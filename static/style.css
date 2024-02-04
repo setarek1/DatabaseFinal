@@ -1,0 +1,90 @@
+body, h1, h2, h3, p, table {
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    size: 10cm;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    background-color: #f8f8f8;
+    color: #333;
+}
+
+h1, h2, h3 {
+    color: #009688;
+}
+
+.container {
+    max-width: 100px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #796d6d;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    border-color: #333;
+}
+
+form {
+    margin-top: 20px;
+    border-radius: 50px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    color: #555;
+}
+
+input {
+    width: 25%;
+    padding: 12px;
+    margin-bottom: 20px;
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+button {
+    background-color: #009688;
+    color: #fff;
+    padding: 10px 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 15%;
+    margin-bottom: 10px;
+}
+
+button:hover {
+    background-color: #00796b;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    margin-left: 10px;
+    margin-right: 10px;
+    background-color: #d4d4d4;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+
+}
+
+th {
+    background-color: #009688;
+    color: #fff;
+}
+
+body.loginbody {
+    background-image: url_for("{{url_for('static', filename='pic1.jpg')}}");
+    background-size: cover;
+    background-position: center;
+}
