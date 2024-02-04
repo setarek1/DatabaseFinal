@@ -1,159 +1,17 @@
-# from unittest import result
-# import mysql.connector
-# from flask import Flask, render_template, request, redirect, url_for, session
-# import mysql.connector
-
-# app = Flask(__name__)
-# app.secret_key = 'your_secret_key'
-
-
-# queries = ['easy'] #, 'hard', 'harder1', 'harder2', 'harder3'
-# # Define a function to execute a query and fetch results
-# # def execute_query(query):
-# #     query = 'SELECT * FROM currencymarket'
-
-# #     conn = mysql.connector.connect(
-# #         host="localhost",
-# #         user="usermanager",
-# #         password="usermanager",
-# #         database="projSchema"
-# #     )
-# #     cursor = conn.cursor(dictionary=True)
-
-# #     try:
-# #         cursor.execute(query)
-# #         data = cursor.fetchall()
-# #         return data
-# #     except mysql.connector.Error as error:
-# #         print(f"Error executing query: {error}")
-# #         return None
-# #     finally:
-# #         cursor.close()
-# #         conn.close()
-
-# @app.route('/')
-# def index():
-#     return render_template('login3.html')
-
-# @app.route('/login', methods=['POST'])
-# def login():
-#     username = request.form['username']
-#     password = request.form['password']
-
-#     # Check user role and authenticate against the MySQL server
-#     try:
-#         conn = mysql.connector.connect(
-#             user=username,
-#             password=password,
-#             host='localhost',
-#             database='projSchema'
-#         )
-#        # cursor = conn.cursor()
-#         # If connection is successful, the user is valid
-#         session['user_role'] = username
-#         print (f'{username}_dashboard')
-#         return redirect(url_for(f'{username}_dashboard'))
-
-#     except mysql.connector.Error as e:
-#         print(f"Error: {e}")
-#         return render_template('login3.html', error='Invalid credentials')
-
-    
-#             #conn.close()
-# @app.route('/admin/dashboard')
-# def admin_dashboard():
-#     return render_template('dashboard3.html', role='admin', queries=queries)
-
-# @app.route('/report/dashboard')
-# def report_dashboard():
-#     return render_template('dashboard3.html', role='report', queries=queries)
-
-# @app.route('/usermanager/dashboard')
-# def usermanager_dashboard():
-#     return render_template('dashboard3.html', role='usermanager', queries=queries)
-
-
-# # Define a route that takes a query parameter
-# @app.route('/easy')
-# def easy():
-#     query = 'SELECT userID, userName, dollarBalance, tomanBalance, lireBalance, poundBalance, euroBalance FROM projschema.wallet w, projschema.user u WHERE u.userID = w.user_userID'
-#     # Execute the provided query
-#     user = session.get('user_role')
-#     try:
-#         # conn = mysql.connector.connect(
-#         #     user=user,
-#         #     password=user,
-#         #     host='localhost',
-#         #     database='projSchema'
-#         # )
-
-#         cursor = conn.cursor()
-#         cursor.execute(query)
-#         data = cursor.fetchall()
-#         return render_template('query_results.html', result=data)
-#     except mysql.connector.Error as error:
-#         print(f"Error executing query: {error}")
-#         #return None
-#     finally:
-#         cursor.close()
-#         conn.close()
-
-# if __name__ == '__main__':
-#     app.run(port = 3000, debug=True)
-
-
-
-
-# from flask import Flask, render_template
-# import mysql.connector
-
-# app = Flask(__name__)
-
-# # Function to execute the query and fetch data
-# def fetch_data_from_db(query):
-#     conn = mysql.connector.connect(
-#         host="localhost",
-#         user="your_username",
-#         password="your_password",
-#         database="your_database"
-#     )
-#     cursor = conn.cursor(dictionary=True)
-#     cursor.execute(query)
-#     data = cursor.fetchall()
-#     cursor.close()
-#     conn.close()
-#     return data
-
-# # Flask route to render the HTML template
-# @app.route('/query_results')
-# def query_results():
-#     # Replace this query with your actual query
-#     query = "SELECT userID, userName FROM projSchema.user"
-   
-#     # Fetch data from the database
-#     data = fetch_data_from_db(query)
-   
-#     # Render the HTML template with the fetched data
-#     return render_template('query_results.html', data=data)
-
-# if __name__ == '__main__':
-#     app.run(debug=True)
-
 
 from flask import Flask, render_template, request, redirect, url_for, session
 import mysql.connector
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
-queries = ['easy', 'hard', 'harder1', 'harder2', 'harder3']
+queries = ['easy', 'hard', 'harder1', 'harder2', 'harder3','ours1','ours2','ours3','ours4','ours5','ours6','ours7','ours8','ours9']
 
-# Define a decorator to check user roles
 def login_required(roles=[]):
     def decorator(view_func):
         def wrapper(*args, **kwargs):
             user_role = session.get('user_role')
             if user_role not in roles:
-                return render_template('unauthorized.html')
+                return render_template('error.html', error='Error')
             return view_func(*args, **kwargs)
         return wrapper
     return decorator
@@ -175,7 +33,7 @@ def login():
                 host='localhost',
                 database='projSchema'
             )
-            # Check user role and authenticate
+            
             session['user_role'] = username
             return redirect(url_for(f'{username}_dashboard'))
         except mysql.connector.Error as e:
@@ -215,7 +73,7 @@ def easy():
             cursor = conn.cursor(dictionary=True)
             cursor.execute(query)
             data = cursor.fetchall()
-            print(data)
+            #print(data)
             if data:
                 return render_template('query_results.html', data=data)
             else:
@@ -265,7 +123,7 @@ def hard():
             cursor = conn.cursor(dictionary=True)
             cursor.execute(query)
             data = cursor.fetchall()
-            print(data)
+            #print(data)
             if data:
                 return render_template('query_results.html', data=data)
             else:
@@ -436,6 +294,366 @@ def harder3():
             conn.close()
             #print("conn closed")
 
+
+@app.route('/ours1', methods=['GET','POST'])
+#@login_required(roles=['admin', 'usermanager', 'report'])
+def ours1():
+    print("executing harder3")
+    if request.method == 'POST':
+        query = '''SELECT
+                        u.userID,
+                        u.username
+                    FROM
+                        user u
+                    JOIN
+                        transaction t ON u.userID = t.user_sellerID OR u.userID = t.user_buyerID1
+                    JOIN
+                        currencymarket c ON c.currencyID = t.currency_fromID OR c.currencyID = t.currency_toID
+                    GROUP BY
+                        u.userID, u.username
+                    HAVING
+                        COUNT(DISTINCT c.currencyID) = (SELECT COUNT(*) FROM currencymarket);'''
+        #print('query: ', query)
+        user = session.get('user_role')
+        try:
+            conn = mysql.connector.connect(
+                user=user,
+                password=user,
+                host='localhost',
+                database='projSchema'
+            )
+            cursor = conn.cursor(dictionary=True)
+            cursor.execute(query)
+            data = cursor.fetchall()
+            #print(data)
+            if data:
+                return render_template('query_results.html', data=data)
+            else:
+                return render_template('query_results.html', error='no results found')
+        except mysql.connector.Error as error:
+            print(f"Error executing query: {error}")
+            return render_template('error.html', error='Error executing the query.')
+        finally:
+            cursor.close()
+            conn.close()
+            #print("conn closed")
+
+@app.route('/ours2', methods=['GET','POST'])
+#@login_required(roles=['admin', 'usermanager', 'report'])
+def ours2():
+    print("executing harder3")
+    if request.method == 'POST':
+        query = '''SELECT
+                        u.userID,
+                        u.username,
+                        COUNT(*) AS transaction_count
+                    FROM
+                        user u
+                    JOIN
+                        transaction t1 ON u.userID = t1.user_buyerID1
+                    JOIN
+                        transaction t2 ON u.userID = t2.user_sellerID
+                    WHERE
+                        t1.currency_fromID = t2.currency_toID
+                        AND t1.currency_toID = t2.currency_fromID
+                    GROUP BY
+                        u.userID, u.username
+                    ORDER BY
+                        transaction_count DESC
+                    LIMIT 10;
+                    SELECT * FROM transaction WHERE user_buyerID1=3696 OR user_sellerID=3696;'''
+        #print('query: ', query)
+        user = session.get('user_role')
+        try:
+            conn = mysql.connector.connect(
+                user=user,
+                password=user,
+                host='localhost',
+                database='projSchema'
+            )
+            cursor = conn.cursor(dictionary=True)
+            cursor.execute(query)
+            data = cursor.fetchall()
+            #print(data)
+            if data:
+                return render_template('query_results.html', data=data)
+            else:
+                return render_template('query_results.html', error='no results found')
+        except mysql.connector.Error as error:
+            print(f"Error executing query: {error}")
+            return render_template('error.html', error='Error executing the query.')
+        finally:
+            cursor.close()
+            conn.close()
+            #print("conn closed")
+
+@app.route('/ours3', methods=['GET','POST'])
+#@login_required(roles=['admin', 'usermanager', 'report'])
+def ours3():
+    print("executing harder3")
+    if request.method == 'POST':
+        query = '''SELECT curr.name,  COUNT(curr.currencyID) AS traded
+                    FROM currencymarket curr
+                    JOIN transaction t ON (curr.currencyID = t.currency_fromID OR curr.currencyID = t.currency_toID)
+                    GROUP BY curr.currencyID;'''
+        #print('query: ', query)
+        user = session.get('user_role')
+        try:
+            conn = mysql.connector.connect(
+                user=user,
+                password=user,
+                host='localhost',
+                database='projSchema'
+            )
+            cursor = conn.cursor(dictionary=True)
+            cursor.execute(query)
+            data = cursor.fetchall()
+            #print(data)
+            if data:
+                return render_template('query_results.html', data=data)
+            else:
+                return render_template('query_results.html', error='no results found')
+        except mysql.connector.Error as error:
+            print(f"Error executing query: {error}")
+            return render_template('error.html', error='Error executing the query.')
+        finally:
+            cursor.close()
+            conn.close()
+            #print("conn closed")
+
+
+@app.route('/ours4', methods=['GET','POST'])
+#@login_required(roles=['admin', 'usermanager', 'report'])
+def ours4():
+    print("executing harder3")
+    if request.method == 'POST':
+        query = '''SELECT u.userID, SUM(t.amount) AS 'max selling dollar' 
+                    FROM user u
+                    JOIN transaction t on u.userID = t.user_sellerID
+                    WHERE t.currency_fromID = 1
+                    GROUP BY u.userID
+                    HAVING SUM(t.amount)> ALL(SELECT SUM(t2.amount)
+                                        FROM user u2
+                                        JOIN transaction t2 on u2.userID = t2.user_sellerID
+                                        WHERE t2.currency_fromID = 1 AND u2.userID != u.userID
+                                        GROUP BY u2.userID);'''
+        #print('query: ', query)
+        user = session.get('user_role')
+        try:
+            conn = mysql.connector.connect(
+                user=user,
+                password=user,
+                host='localhost',
+                database='projSchema'
+            )
+            cursor = conn.cursor(dictionary=True)
+            cursor.execute(query)
+            data = cursor.fetchall()
+            #print(data)
+            if data:
+                return render_template('query_results.html', data=data)
+            else:
+                return render_template('query_results.html', error='no results found')
+        except mysql.connector.Error as error:
+            print(f"Error executing query: {error}")
+            return render_template('error.html', error='Error executing the query.')
+        finally:
+            cursor.close()
+            conn.close()
+            #print("conn closed")
+
+
+
+@app.route('/ours5', methods=['GET','POST'])
+#@login_required(roles=['admin', 'usermanager', 'report'])
+def ours5():
+    print("executing harder3")
+    if request.method == 'POST':
+        query = '''SELECT u.userID AS ID, u.userName AS name
+                    FROM user u
+                    WHERE u.userID NOT IN(
+                        SELECT u2.userID
+                        FROM user u2
+                        JOIN transaction t on (u2.userID = t.user_sellerID OR u2.userID = t.user_buyerID1)
+                        WHERE t.currency_fromID = 3 OR t.currency_toID = 3);'''
+        #print('query: ', query)
+        user = session.get('user_role')
+        try:
+            conn = mysql.connector.connect(
+                user=user,
+                password=user,
+                host='localhost',
+                database='projSchema'
+            )
+            cursor = conn.cursor(dictionary=True)
+            cursor.execute(query)
+            data = cursor.fetchall()
+            #print(data)
+            if data:
+                return render_template('query_results.html', data=data)
+            else:
+                return render_template('query_results.html', error='no results found')
+        except mysql.connector.Error as error:
+            print(f"Error executing query: {error}")
+            return render_template('error.html', error='Error executing the query.')
+        finally:
+            cursor.close()
+            conn.close()
+            #print("conn closed")
+
+@app.route('/ours6', methods=['GET','POST'])
+#@login_required(roles=['admin', 'usermanager', 'report'])
+def ours6():
+    print("executing harder3")
+    if request.method == 'POST':
+        query = '''SELECT temp.userID, temp.userName, temp.CID
+                    FROM
+                    ((SELECT u.userID, u.userName, t.currency_fromID AS CID
+                    FROM user u
+                    JOIN transaction t ON (t.user_sellerID = u.userID)
+                    GROUP BY u.userID)
+                    UNION
+                    (SELECT u.userID, u.userName, t.currency_toID AS CID
+                    FROM user u
+                    JOIN transaction t ON (t.user_buyerID1 = u.userID)
+                    GROUP BY u.userID)) AS temp
+                    GROUP BY temp.userID
+                    HAVING COUNT(DISTINCT temp.CID) = 2;'''
+        #print('query: ', query)
+        user = session.get('user_role')
+        try:
+            conn = mysql.connector.connect(
+                user=user,
+                password=user,
+                host='localhost',
+                database='projSchema'
+            )
+            cursor = conn.cursor(dictionary=True)
+            cursor.execute(query)
+            data = cursor.fetchall()
+            #print(data)
+            if data:
+                return render_template('query_results.html', data=data)
+            else:
+                return render_template('query_results.html', error='no results found')
+        except mysql.connector.Error as error:
+            print(f"Error executing query: {error}")
+            return render_template('error.html', error='Error executing the query.')
+        finally:
+            cursor.close()
+            conn.close()
+            #print("conn closed")
+
+
+@app.route('/ours7', methods=['GET','POST'])
+#@login_required(roles=['admin', 'usermanager', 'report'])
+def ours7():
+    print("executing harder3")
+    if request.method == 'POST':
+        query = '''SELECT t.user_sellerID AS sellerID, t.user_buyerID1 AS buyerID
+                        , u1.userName AS sellerName, u2.userName AS buyerName, COUNT(t.transactionID) AS transactionCount 
+                        FROM transaction t 
+                        JOIN user u1 ON t.user_sellerID = u1.userID 
+                        JOIN user u2 ON t.user_buyerID1 = u2.userID 
+                        GROUP BY sellerID, buyerID;'''
+        #print('query: ', query)
+        user = session.get('user_role')
+        try:
+            conn = mysql.connector.connect(
+                user=user,
+                password=user,
+                host='localhost',
+                database='projSchema'
+            )
+            cursor = conn.cursor(dictionary=True)
+            cursor.execute(query)
+            data = cursor.fetchall()
+            #print(data)
+            if data:
+                return render_template('query_results.html', data=data)
+            else:
+                return render_template('query_results.html', error='no results found')
+        except mysql.connector.Error as error:
+            print(f"Error executing query: {error}")
+            return render_template('error.html', error='Error executing the query.')
+        finally:
+            cursor.close()
+            conn.close()
+            #print("conn closed")
+
+
+@app.route('/ours8', methods=['GET','POST'])
+#@login_required(roles=['admin', 'usermanager', 'report'])
+def ours8():
+    print("executing harder3")
+    if request.method == 'POST':
+        query = '''SELECT userID, username
+                    FROM user 
+                    WHERE userID NOT IN(
+                    SELECT userID
+                    FROM user
+                    JOIN transaction ON userID = user_sellerID OR userID = user_buyerID1
+                    GROUP BY userID
+                    HAVING COUNT(transactionID)>2);'''
+        #print('query: ', query)
+        user = session.get('user_role')
+        try:
+            conn = mysql.connector.connect(
+                user=user,
+                password=user,
+                host='localhost',
+                database='projSchema'
+            )
+            cursor = conn.cursor(dictionary=True)
+            cursor.execute(query)
+            data = cursor.fetchall()
+            #print(data)
+            if data:
+                return render_template('query_results.html', data=data)
+            else:
+                return render_template('query_results.html', error='no results found')
+        except mysql.connector.Error as error:
+            print(f"Error executing query: {error}")
+            return render_template('error.html', error='Error executing the query.')
+        finally:
+            cursor.close()
+            conn.close()
+            #print("conn closed")
+
+@app.route('/ours9', methods=['GET','POST'])
+#@login_required(roles=['admin', 'usermanager', 'report'])
+def ours9():
+    print("executing harder3")
+    if request.method == 'POST':
+        query = '''SELECT u.userID, u.userName
+                    FROM user u
+                    JOIN transaction t ON (u.userID = t.user_sellerID OR u.userID = t.user_buyerID1) 
+                    GROUP BY u.userID
+                    HAVING (COUNT(DISTINCT t.currency_fromID) = 5) AND (COUNT(DISTINCT t.currency_toID) = 5);'''
+        #print('query: ', query)
+        user = session.get('user_role')
+        try:
+            conn = mysql.connector.connect(
+                user=user,
+                password=user,
+                host='localhost',
+                database='projSchema'
+            )
+            cursor = conn.cursor(dictionary=True)
+            cursor.execute(query)
+            data = cursor.fetchall()
+            #print(data)
+            if data:
+                return render_template('query_results.html', data=data)
+            else:
+                return render_template('query_results.html', error='no results found')
+        except mysql.connector.Error as error:
+            print(f"Error executing query: {error}")
+            return render_template('error.html', error='Error executing the query.')
+        finally:
+            cursor.close()
+            conn.close()
+            #print("conn closed")
 
 
 
