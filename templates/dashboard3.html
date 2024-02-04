@@ -13,7 +13,7 @@
     <h3 color: #009688>Your Queries:</h3>
     <form method="post" action="#">
         {% for i in queries %}
-            <button type="submit" formaction="{{url_for(i)}}">{{ i }}</button>
+            <button type="submit" formaction="{{url_for(i)}}" title="{% if i == 'easy' %}total balance of each currency on user's wallet{% elif i == 'hard' %}list of all transactions of a specific currency pair in a time frame with user detailsExecute hard query{% elif i == 'harder1' %}monthly transactions including total traded amount and number of transactions for each currency{% elif i == 'harder2' %}top 5 trader in dollar-toman considering total traded amount {% elif i == 'harder3' %}avg and total traded amount of each currency pair in a time frame{% elif i == 'ours1' %}each currency and total traded number{% elif i == 'ours2' %}user with highest total selling Dollar amount{% elif i == 'ours3' %}users who have not traded with Lire{% elif i == 'ours4' %}users who have traded only in one currency pair{% elif i == 'ours5' %}information about transaction, seller and buyer, number if transactions for each unique seller-buyer pair{% elif i == 'ours6' %}users who have not participated in more than 2 transactions{% elif i == 'ours7' %}users who have participated in transactions involving all currencies as base and target currency{% elif i == 'ours8' %}top 10 user with switches between a currency pairExecute hard query{% elif i == 'ours9' %}users with transactions in all currencies{% endif %}">{{ i }}</button>
         {% endfor %}
     </form>
 </body>
