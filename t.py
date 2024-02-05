@@ -25,7 +25,8 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-
+        if username != password:
+                return render_template('error.html', error='error loging in')
         try:
             conn = mysql.connector.connect(
                 user=username,
